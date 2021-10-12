@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Load environment variables (docker image name)
+export $(grep -v '^#' $(dirname $(readlink -f $0))/deepmicrobes.env | xargs)
+
+# Run container
+exec docker run --rm -ti --gpus 1 \
+  -v $(dirname $(readlink -f $0))/output/:/root/DeepMicrobes/output/ \
+  -v $(dirname $(readlink -f $0))/input/:/root/DeepMicrobes/input/ \
+  $DOCKER_IMAGE_BASE:$DOCKER_IMAGE_TAG \
+  $@
+
+# Would equate to running something like this:
+#sudo docker run --rm -ti --gpus all \
+#  -v /home/skro0041/DeepMicrobes/output/:/root/DeepMicrobes/output/ \
+#  -v /home/skro0041/DeepMicrobes/input/:/root/DeepMicrobes/input/ \
+#  sebastiankrog/deepmicrobes

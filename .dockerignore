@@ -1,0 +1,22 @@
+# Ignore everything
+**
+
+# Allow files and directories
+!/bin/**
+!/data/**
+!/docker/**
+!/document/**
+!/models/**
+!/pipelines/**
+!/scripts/**
+!/utils/**
+!/DeepMicrobes.py
+!/install.yml
+!/dockerDM
+!/deepmicrobes.env
+!/Makefile
+
+# Ignore unnecessary files inside allowed directories
+**/*.log
+**/.DS_Store
+**/Thumbs.db
