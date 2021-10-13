@@ -218,13 +218,6 @@ def train(flags_obj, model_function, dataset_name):
 
 # --------------------------------------- Evaluation 
 def evaluate(flags_obj, model_function):
-'''
-From (https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator)
-Estimator class to train and evaluate TensorFlow models
-The Estimator object wraps a model which is specified by
-a model_fn, which, given inputs and a number of other 
-parameters, returns the ops necessary to perform training, evaluation, or predictions.
-'''
     classifier = tf.estimator.Estimator(
         model_fn=model_function, model_dir=flags_obj.model_dir,
         params={
