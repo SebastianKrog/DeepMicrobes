@@ -99,7 +99,7 @@ def config(model_name, params):
 def model_fn(features, labels, mode, params):
     model = config(flags.FLAGS.model_name, params)
     logits = model(features)
-
+# ------- Prediction mode
     predictions = {
         'classes': tf.argmax(logits, axis=1),
         'probabilities': tf.nn.softmax(logits)
@@ -120,7 +120,8 @@ def model_fn(features, labels, mode, params):
     # Create a tensor named cross_entropy for logging purposes.
     tf.identity(loss, name='cross_entropy')
     tf.summary.scalar('cross_entropy', loss)
-
+    
+    # ------- Training mode
     if mode == tf.estimator.ModeKeys.TRAIN:
         global_step = tf.train.get_or_create_global_step()
 
@@ -189,6 +190,7 @@ def train(flags_obj, model_function, dataset_name):
         batch_size=flags_obj.batch_size)
 
     def input_fn_train():
+        # ------ Train based on kmers as inputs
         if flags_obj.encode_method == 'kmer':
             input_fn = input_function_train_kmer(
                 flags_obj.input_tfrec,
@@ -203,6 +205,7 @@ def train(flags_obj, model_function, dataset_name):
                     flags_obj.cpus, flags_obj.max_len, flags_obj.kmer
                 )
         else:
+            # ------ Train based on one-hot-encoding as inputs
             input_fn = input_function_train_one_hot(
                 flags_obj.input_tfrec,
                 flags_obj.train_epochs, flags_obj.batch_size,
@@ -213,9 +216,15 @@ def train(flags_obj, model_function, dataset_name):
 
     classifier.train(input_fn=input_fn_train, hooks=train_hooks)
 
-
+# --------------------------------------- Evaluation 
 def evaluate(flags_obj, model_function):
-
+'''
+From (https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator)
+Estimator class to train and evaluate TensorFlow models
+The Estimator object wraps a model which is specified by
+a model_fn, which, given inputs and a number of other 
+parameters, returns the ops necessary to perform training, evaluation, or predictions.
+'''
     classifier = tf.estimator.Estimator(
         model_fn=model_function, model_dir=flags_obj.model_dir,
         params={
@@ -261,7 +270,7 @@ def evaluate(flags_obj, model_function):
 
     classifier.evaluate(input_fn=input_fn_eval)
 
-
+# --------------------------- Prediction
 def predict(flags_obj, model_function):
 
     classifier = tf.estimator.Estimator(
@@ -357,6 +366,9 @@ def main(_):
         train(flags.FLAGS, model_fn, 'dataset_name')
 
 if __name__ == "__main__":
+    # if DeepMicrobes.py is executed as the main program then the following codes are executed, otherwise if it is 
+    # called as a module by another program then the following codes are not executed
+    # More explanations: https://stackoverflow.com/questions/419163/what-does-if-name-main-do
     tf.logging.set_verbosity(tf.logging.INFO)
     universal_flags()
     model_specific_flags_embed_cnn()
