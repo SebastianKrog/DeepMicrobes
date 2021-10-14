@@ -10,6 +10,7 @@ RUN apt-get update -q && \
         bzip2 \
         ca-certificates \
         git \
+	parallel \
         libglib2.0-0 \
         libsm6 \
         libxext6 \
