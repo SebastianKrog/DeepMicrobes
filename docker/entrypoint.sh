@@ -10,6 +10,6 @@ set -e
 
 cd /root/DeepMicrobes
 
-conda activate base
+conda activate DeepMicrobes
 
 exec "$@"
